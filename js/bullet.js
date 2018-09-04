@@ -3,7 +3,7 @@ function Bullet(game, x, y) {
 
     this.x = x;
     this.y = y;
-    this.bulletVelocity = 30;
+    this.bulletVelocity = 15;
     this.missile = new Image();
     this.missile.src = 'img/missile.png';
     this.h = 25;

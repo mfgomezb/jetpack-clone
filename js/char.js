@@ -25,7 +25,7 @@ Char.prototype.draw = function() {
 
 Char.prototype.thrust = function() {
     if (this.velocity > 0){
-        this.velocity-=5;
+        this.velocity-=2;
     }
 
     if (this.y ==  this.height-100){
@@ -52,13 +52,4 @@ Char.prototype.gravity = function() {
         this.y = 0
         this.velocity = 0;
     }
-
-
-
-    // if (this.y < 0){
-    //     this.y = 0;
-    //     this.direction = 0;
-    //     console.log("0")
-
-    // }
-  };
+};
