@@ -25,7 +25,7 @@ Char.prototype.draw = function() {
 
 Char.prototype.thrust = function() {
     if (this.velocity > 0){
-        this.velocity-=2;
+        this.velocity-=5;
     }
 
     if (this.y ==  this.height-100){

@@ -11,8 +11,11 @@ Game.prototype.start = function() {
 this.interval = setInterval(function() {
     this.clear();
     this.framesCounter++;
-    console.log(this.framesCounter)
-    if (this.framesCounter > 100){ this.controlVar = true}
+
+    if (this.framesCounter > 100){ 
+        this.controlVar = true
+        }
+
     if (this.controlVar == false) {
         
     if (this.framesCounter % 80 === 0) {
@@ -44,30 +47,32 @@ this.interval = setInterval(function() {
     if (this.isCollision()) {
         this.life--
         console.log("game over")
-      }
+    }
     
-    
-    } else {
 
-        this.moveAll();
-        this.draw();
-        this.commands();
-        this.clearBullets();
-        this.coinGrab()
-        this.heartGrab()
+    } else {
+ 
+    this.moveAll();
+    this.draw();
+    this.commands();
+    this.moveEvil();
+    this.drawEvil();
+    this.clearObstacles();
+    this.clearCoins();
+    this.clearBullets();
+    this.clearHearts();
+    this.coinGrab()
+    this.heartGrab()
     }
 
-   
-    
 }.bind(this), 1000 / this.fps);
-
 };
 
 Game.prototype.reset = function() {
     this.background = new Background(this);
     this.char = new Char(this);
+    this.evil = new Evil(this);
     this.framesCounter = 0;
-    this.framesCounter2 = 0;
     this.obstacles = [];
     this.coins = [];
     this.bullets = [];
@@ -78,13 +83,17 @@ Game.prototype.reset = function() {
 
 Game.prototype.commands = function () {
     document.onkeydown = function(event) {
-        if (event.keyCode == 38) {
+        if (event.keyCode == 32) {
             this.char.thrust(); 
-        } else if (event.keyCode == 32) {
+        } else if (event.keyCode == 38) {
             this.generateBullet();
         }
     }.bind(this);
 }
+
+Game.prototype.clear = function() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+}; 
 
 Game.prototype.draw = function() {
     this.background.draw();
@@ -96,9 +105,10 @@ Game.prototype.draw = function() {
     this.drawScoreBoard();
 };
 
-Game.prototype.clear = function() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-}; 
+
+Game.prototype.drawEvil = function() {
+    this.evil.drawEvil();
+}
 
 Game.prototype.moveAll = function() {
     this.background.move();
@@ -108,6 +118,10 @@ Game.prototype.moveAll = function() {
     this.bullets.forEach(function(bullet) { bullet.move(); });
     this.hearts.forEach(function(heart) { heart.move(); });
 };
+
+Game.prototype.moveEvil = function() {
+    this.evil.move();
+}
 
 
 // clear functions
@@ -142,7 +156,6 @@ Game.prototype.generateCoin = function(posX, posY) {
     this.coins.push(new Coin(this, posX, posY));
 };
 
-  
 Game.prototype.generateObstacle = function() {
     this.obstacles.push(new Obstacle(this));
 };
