@@ -3,7 +3,7 @@ function Game(canvas) {
     this.ctx = this.canvas.getContext("2d");
     this.fps = 30;
     this.reset();
-    this.controlVar = false;
+    this.controlVar = 0;
 
   }
 
@@ -12,57 +12,35 @@ this.interval = setInterval(function() {
     this.clear();
     this.framesCounter++;
 
-    if (this.framesCounter > 100){ 
-        this.controlVar = true
+    if (this.controlVar == 0) {
+
+        this.commonState1and2();    
+
+        if (this.framesCounter > 1000){ 
+            this.controlVar = 1
+        }
+        if (this.framesCounter % 80 === 0) {
+            this.generateObstacle();
+        }
+        if (this.framesCounter % 100 === 0) {
+            this.generateCoin();
         }
 
-    if (this.controlVar == false) {
-        
-    if (this.framesCounter % 80 === 0) {
-        this.generateObstacle();
+    } else if (this.controlVar == 1) {
+        this.commonState1and2();
+        this.isImpact();
+        this.moveEvil();
+        this.evilLifeCheck()
+        this.drawEvilHealth();
+        this.evilShoot();
+        this.evilImpact();
 
-    if (this.framesCounter % 240 === 0) {
-        this.generateHeart();
-    }
-    } 
-    if (this.framesCounter % 100 === 0) {
-        var posX = [0, 40, 80, 120]
-        var posY = (Math.floor(Math.random()*1*(4-1)))
-        for (i = 0; i < posX.length; i++){
-            this.generateCoin(posX[i], posY);
-        }
-    }
-    
-    this.moveAll();
-    this.draw();
-    this.commands();
-    this.clearObstacles();
-    this.clearCoins();
-    this.clearBullets();
-    this.clearHearts();
-    this.coinGrab()
-    this.heartGrab()
-
-
-    if (this.isCollision()) {
-        this.life--
-        console.log("game over")
-    }
-    
-
-    } else {
- 
-    this.moveAll();
-    this.draw();
-    this.commands();
-    this.moveEvil();
-    this.drawEvil();
-    this.clearObstacles();
-    this.clearCoins();
-    this.clearBullets();
-    this.clearHearts();
-    this.coinGrab()
-    this.heartGrab()
+    } else if (this.controlVar == 2) {
+        this.moveAll();
+        this.draw();
+        this.drawWinScoreBoard();
+    } else if (this.controlVar == 3) {
+        this.winScreenDraw();
     }
 
 }.bind(this), 1000 / this.fps);
@@ -76,9 +54,11 @@ Game.prototype.reset = function() {
     this.obstacles = [];
     this.coins = [];
     this.bullets = [];
+    this.evilBullets = [];
     this.hearts = [];
     this.score = 0;
     this.life = 3;
+    this.evilLife = 10;
 };
 
 Game.prototype.commands = function () {
@@ -91,6 +71,13 @@ Game.prototype.commands = function () {
     }.bind(this);
 }
 
+Game.prototype.evilShoot = function () {
+    Math.random()
+    if (Math.random() < 0.05) {
+        this.generateEvilBullet();
+    }
+}
+
 Game.prototype.clear = function() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }; 
@@ -101,6 +88,7 @@ Game.prototype.draw = function() {
     this.obstacles.forEach(function(obstacle) { obstacle.draw(); });
     this.coins.forEach(function(coin) { coin.drawCoin(); });
     this.bullets.forEach(function(bullet) { bullet.drawBullet(); });
+    this.evilBullets.forEach(function(evilBullet) { evilBullet.drawEvilBullet(); });
     this.hearts.forEach(function(heart) { heart.drawHeart(); });
     this.drawScoreBoard();
 };
@@ -116,6 +104,7 @@ Game.prototype.moveAll = function() {
     this.obstacles.forEach(function(obstacle) { obstacle.move(); });
     this.coins.forEach(function(coin) { coin.move(); });
     this.bullets.forEach(function(bullet) { bullet.move(); });
+    this.evilBullets.forEach(function(evilBullet) { evilBullet.evilBulletMove(); });
     this.hearts.forEach(function(heart) { heart.move(); });
 };
 
@@ -123,37 +112,54 @@ Game.prototype.moveEvil = function() {
     this.evil.move();
 }
 
+Game.prototype.winScreenDraw = function() {
+    this.background.draw();
+    this.char.draw();
+    this.GameOverScoreBoard();
+}
+
+Game.prototype.commonState1and2 = function() {
+    this.moveAll();
+    this.draw();
+    this.commands();
+    this.clearObjects();
+    this.coinGrab();
+    this.heartGrab();
+    this.isCollision();
+    if (this.framesCounter % 240 === 0) {
+        this.generateHeart();
+    }
+    if (this.charLifeCheck() == false) {
+        this.controlVar = 3;
+    }
+}
 
 // clear functions
 
-Game.prototype.clearCoins = function() {
+Game.prototype.clearObjects = function() {
     this.coins = this.coins.filter(function(coin) {
       return coin.x >= -50;
     });
-  };
-
-Game.prototype.clearBullets = function() {
     this.bullets = this.bullets.filter(function(bullet) {
         return bullet.x < this.canvas.width;
     }.bind(this));
-};
-
-Game.prototype.clearObstacles = function() {
     this.obstacles = this.obstacles.filter(function(obstacle) {
-      return obstacle.x >= -175;
+        return obstacle.x >= -175;
     });
-  };
-
-Game.prototype.clearHearts = function() {
-this.hearts = this.hearts.filter(function(heart) {
-    return heart.x >= -175;
-});
+    this.hearts = this.hearts.filter(function(heart) {
+        return heart.x >= -50;
+    });
+    
 };
 
 //object generation
   
-Game.prototype.generateCoin = function(posX, posY) {
-    this.coins.push(new Coin(this, posX, posY));
+Game.prototype.generateCoin = function() {
+    var posX = [0, 40, 80, 120]
+    var posY = (Math.floor(Math.random()*1*(4-1)))
+    for (i = 0; i < posX.length; i++){
+        this.coins.push(new Coin(this, posX[i], posY));
+    }  
 };
 
 Game.prototype.generateObstacle = function() {
@@ -164,20 +170,34 @@ Game.prototype.generateBullet = function() {
     this.bullets.push(new Bullet(this, this.char.x, this.char.y));
 };
 
+Game.prototype.generateEvilBullet = function() {
+    this.evilBullets.push(new Bullet(this, this.evil.x, this.evil.y));
+};
+
 Game.prototype.generateHeart = function() {
     this.hearts.push(new Heart(this));
 };
 
 
+Game.prototype.evilLifeCheck = function () {
+    if (this.evilLife > 0) {
+        this.drawEvil()
+    } else {
+        this.controlVar = 2;
+    }
+}
+
+Game.prototype.charLifeCheck = function () {
+    if (this.life == 0) {
+        this.controlVar = 3;
+    } 
+}
+
 // object intersection detection
 
 Game.prototype.isCollision = function() {
     return this.obstacles.forEach(function(obstacle, i) {
-        if (
-        (((this.char.x + this.char.w) > obstacle.x) 
-        && ((this.char.y + this.char.h) > obstacle.y) 
-        && ((this.char.y + this.char.h) < obstacle.y+obstacle.h) 
-        && ((this.char.x) < obstacle.x+obstacle.w)) 
+        if (this.impactChecker(obstacle) 
         || (((this.char.x + this.char.w) > obstacle.x2) 
         && ((this.char.y + this.char.h) > obstacle.y2) 
         && ((this.char.y + this.char.h) < obstacle.y2+obstacle.h)  
@@ -190,14 +210,16 @@ Game.prototype.isCollision = function() {
     }.bind(this));
 };
 
+Game.prototype.impactChecker = function (element) {
+    return (((this.char.x + this.char.w) > element.x) && 
+    ((this.char.y + this.char.h) > element.y) && 
+    ((this.char.y + this.char.h) < element.y+element.h) && 
+    ((this.char.x) < element.x+element.w));
+}
+
 Game.prototype.coinGrab = function() {
     return this.coins.forEach(function(coin, i) {
-    if (
-    ((this.char.x + this.char.w) > coin.x) && 
-    ((this.char.y + this.char.h) > coin.y) && 
-    ((this.char.y + this.char.h) < coin.y+coin.h) && 
-    ((this.char.x) < coin.x+coin.w)
-    ) {
+    if (this.impactChecker(coin)) {
         this.coins.splice(i,1);
         this.score++;
         return true;
@@ -207,12 +229,7 @@ Game.prototype.coinGrab = function() {
 
 Game.prototype.heartGrab = function() {
     return this.hearts.forEach(function(heart, i) {
-    if (
-    ((this.char.x + this.char.w) > heart.x) && 
-    ((this.char.y + this.char.h) > heart.y) && 
-    ((this.char.y + this.char.h) < heart.y+heart.h) && 
-    ((this.char.x) < heart.x+heart.w)
-    ) {
+    if (this.impactChecker(heart)) {
         this.hearts.splice(i,1);
         this.life++;
         return true;
@@ -220,6 +237,29 @@ Game.prototype.heartGrab = function() {
     }.bind(this));
 };
 
+Game.prototype.isImpact = function() {
+    return this.bullets.forEach(function(bullet, i) {
+        if ( 
+            ((bullet.x+bullet.w) > this.evil.x)
+        &&  ((bullet.y+bullet.h) > this.evil.y)
+        &&  ((bullet.y+bullet.h) < (this.evil.y+this.evil.h))
+        ) {
+            this.bullets.splice(i,1);
+            this.evilLife--;
+            return true;
+        };
+    }.bind(this));
+};
+
+Game.prototype.evilImpact = function() {
+    return this.evilBullets.forEach(function(evilBullet, i) {
+    if (this.impactChecker(evilBullet)) {
+        this.evilBullets.splice(i,1);
+        this.life--;
+        return true;
+    };
+    }.bind(this));
+};
 
 // scoreboard
 
@@ -240,6 +280,41 @@ Game.prototype.drawScoreBoard = function() {
     this.ctx.save()
     this.ctx.drawImage(scoreHearts, this.canvas.width-160, 27, 27, 27);
     this.ctx.restore()
+}
+
+Game.prototype.drawEvilHealth = function () {
+    this.ctx.font = "bold 30px sans-serif";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(Math.floor(this.evilLife), this.canvas.width-220, 50);
+    evil = new Image();
+    evil.src = 'img/evilbear.png';
+    this.ctx.save()
+    this.ctx.drawImage(evil, this.canvas.width-260, 27, 27, 27);
+    this.ctx.restore()
+}
+
+Game.prototype.drawWinScoreBoard = function() {
+    this.ctx.fillStyle = "rgba(127, 191, 63, 0.4)";
+    this.ctx.fillRect(0,0,this.canvas.width, this.canvas.height);
+    this.ctx.font = "bold 40px sans-serif";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("SCORE: ", (this.canvas.width/2)-150, (this.canvas.height/2)+30);
+    this.ctx.fillText(Math.floor(this.score), (this.canvas.width/2)+30, (this.canvas.height/2)+30);
+    this.ctx.font = "bold 60px sans-serif";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("YOU WIN!!", (this.canvas.width/2)-150, (this.canvas.height/2)-20);
+}
+
+Game.prototype.GameOverScoreBoard = function() {
+    this.ctx.fillStyle = "rgba(224, 30, 30, 0.68)";
+    this.ctx.fillRect(0,0,this.canvas.width, this.canvas.height);
+    this.ctx.font = "bold 40px sans-serif";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("SCORE: ", (this.canvas.width/2)-150, (this.canvas.height/2)+30);
+    this.ctx.fillText(Math.floor(this.score), (this.canvas.width/2)+30, (this.canvas.height/2)+30);
+    this.ctx.font = "bold 60px sans-serif";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("GAME OVER!", (this.canvas.width/2)-150, (this.canvas.height/2)-20);
 }
 
   
