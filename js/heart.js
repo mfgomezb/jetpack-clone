@@ -2,7 +2,7 @@ function Heart(game) {
     this.game = game;
 
     this.heart= new Image();
-    this.heart.src = 'img/Hearts.png';
+    this.heart.src = 'img/hearts.png';
     this.type = "heart"
     this.h = 50;
     this.w = 50;
