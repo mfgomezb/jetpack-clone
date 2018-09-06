@@ -5,7 +5,7 @@ function Coin(game, posX, posY) {
     this.type = "coin"
 
     this.coin= new Image();
-    this.coin.src = 'img/coin2.png';
+    this.coin.src = 'img/Coin2.png';
     this.h = 40;
     this.w = 40;
     this.dx = 10;
