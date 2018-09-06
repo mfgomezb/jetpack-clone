@@ -2,6 +2,7 @@ function Coin(game, posX, posY) {
     this.game = game;
     this.posX = posX;
     this.posY = posY;
+    this.type = "coin"
 
     this.coin= new Image();
     this.coin.src = 'img/coin2.png';

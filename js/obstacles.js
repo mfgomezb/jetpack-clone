@@ -2,9 +2,10 @@ function Obstacle(game) {
     this.game = game;
     this.img = new Image();
     this.img.src = 'img/zapper.png';
+    this.type = "obstacle"
 
     this.h = 150;
-    this.w = 60;
+    this.w = 30;
     this.m = Math.floor((Math.random()*100-(50)));
     this.m2 = Math.floor((Math.random()*100+100));
   
@@ -17,8 +18,8 @@ function Obstacle(game) {
   
 Obstacle.prototype.draw = function() {
     this.game.ctx.save()
-    this.game.ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
-    this.game.ctx.drawImage(this.img, this.x2, this.y2, this.w, this.h);
+    this.game.ctx.drawImage(this.img, this.x, this.y, 60, this.h);
+    this.game.ctx.drawImage(this.img, this.x2, this.y2, 60, this.h);
     this.game.ctx.restore()
 };
 

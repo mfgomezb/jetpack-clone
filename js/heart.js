@@ -3,6 +3,7 @@ function Heart(game) {
 
     this.heart= new Image();
     this.heart.src = 'img/Hearts.png';
+    this.type = "heart"
     this.h = 50;
     this.w = 50;
     this.dx = 10;

@@ -4,7 +4,6 @@ function Game(canvas) {
     this.fps = 30;
     this.reset();
     this.controlVar = 0;
-
   }
 
 Game.prototype.start = function() {
@@ -39,8 +38,10 @@ this.interval = setInterval(function() {
         this.moveAll();
         this.draw();
         this.drawWinScoreBoard();
+        this.storeScore(playerName)
     } else if (this.controlVar == 3) {
-        this.winScreenDraw();
+        this.gameOverScreenDraw();
+        this.storeScore(playerName)
     }
 
 }.bind(this), 1000 / this.fps);
@@ -112,7 +113,12 @@ Game.prototype.moveEvil = function() {
     this.evil.move();
 }
 
-Game.prototype.winScreenDraw = function() {
+Game.prototype.storeScore = function(playerName) {
+    this.playerName = playerName;
+    localStorage.setItem(playerName, this.score);
+}
+
+Game.prototype.gameOverScreenDraw = function() {
     this.background.draw();
     this.char.draw();
     this.GameOverScoreBoard();
