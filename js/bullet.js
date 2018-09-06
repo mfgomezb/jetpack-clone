@@ -4,6 +4,7 @@ function Bullet(game, x, y) {
     this.x = x;
     this.y = y;
     this.bulletVelocity = 15;
+    this.bulletVelocity2 = 30;
     this.missile = new Image();
     this.missile.src = 'img/missile.png';
     this.missile2 = new Image();
@@ -30,11 +31,15 @@ Bullet.prototype.move = function() {
 }
 
 Bullet.prototype.evilBulletMove = function() {
-    this.x -= this.bulletVelocity;
+    if (Math.random() > 0.5) {
+        this.x -= this.bulletVelocity;
+    } else {
+        this.x -= this.bulletVelocity2;
+    }
     
     if (this.y > 350){
-        this.y -= Math.floor(Math.random()*20-(10))
+        this.y -= Math.floor(Math.random()*30-(10))
     } else {
-        this.y += Math.floor(Math.random()*20-(10))
+        this.y += Math.floor(Math.random()*30-(10))
     }
   }

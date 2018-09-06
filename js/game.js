@@ -1,8 +1,8 @@
-function Game(canvas) {
+function Game(canvas, level) {
     this.canvas = document.getElementById(canvas);
     this.ctx = this.canvas.getContext("2d");
     this.fps = 30;
-    this.reset();
+    this.reset(level);
     this.controlVar = 0;
   }
 
@@ -13,12 +13,18 @@ this.interval = setInterval(function() {
 
     if (this.controlVar == 0) {
 
+        if (level%240 == 0 || ((level%100 == 0)&&(level%120 == 0))) {
+            level = level - 60;
+        } else {
+            level = level;
+        }
+
         this.commonState1and2();    
 
         if (this.framesCounter > 1000){ 
             this.controlVar = 1
         }
-        if (this.framesCounter % 80 === 0) {
+        if (this.framesCounter % level === 0) {
             this.generateObstacle();
         }
         if (this.framesCounter % 100 === 0) {
@@ -47,7 +53,7 @@ this.interval = setInterval(function() {
 }.bind(this), 1000 / this.fps);
 };
 
-Game.prototype.reset = function() {
+Game.prototype.reset = function(level) {
     this.background = new Background(this);
     this.char = new Char(this);
     this.evil = new Evil(this);
@@ -60,6 +66,7 @@ Game.prototype.reset = function() {
     this.score = 0;
     this.life = 3;
     this.evilLife = 10;
+    this.level = level;
 };
 
 Game.prototype.commands = function () {
@@ -309,6 +316,10 @@ Game.prototype.drawWinScoreBoard = function() {
     this.ctx.font = "bold 60px sans-serif";
     this.ctx.fillStyle = "white";
     this.ctx.fillText("YOU WIN!!", (this.canvas.width/2)-150, (this.canvas.height/2)-20);
+    setTimeout(function(){
+        location.reload()
+    }, 2500);
+    
 }
 
 Game.prototype.GameOverScoreBoard = function() {
@@ -321,6 +332,9 @@ Game.prototype.GameOverScoreBoard = function() {
     this.ctx.font = "bold 60px sans-serif";
     this.ctx.fillStyle = "white";
     this.ctx.fillText("GAME OVER!", (this.canvas.width/2)-150, (this.canvas.height/2)-20);
+    setTimeout(function(){
+        location.reload()
+    }, 2500)
 }
 
   

@@ -11,3 +11,12 @@ body {
     margin: 50px auto;
 
 }
+
+.levels {
+    display: flex;
+    justify-content: space-between;
+}
+
+.levels .btn {
+    width:100%;
+}

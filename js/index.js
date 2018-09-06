@@ -1,21 +1,40 @@
 window.onload = function() {
-    var game = new Game("canvas");
+    
 
     function takeName() {
       return inputValue = $(".form-control").val();
     }
+
+    level = 80;
+    playerName = "";
+
     $(".btn-restart").attr('disabled', true);
+    $(".btn-easy").attr('disabled', true);
+    $(".btn-hard").attr('disabled', true);
+    $(".btn-start").attr('disabled', true);
 
     $(".btn-add").click(function() {
       playerName = takeName();
-      // console.log(playerName);
-      game.storeScore(playerName);
+      $(".btn-easy").attr('disabled', false);
+      $(".btn-hard").attr('disabled', false);
+    });
+
+    $(".btn-easy").click(function() {
+      level = 80
+      $(".btn-start").attr('disabled', false);
+    });
+
+    $(".btn-hard").click(function() {
+      level = 60
+      $(".btn-start").attr('disabled', false);
     });
 
     $(".btn-start").click(function() {
       $(this).attr('disabled', true);
       $(".btn-restart").attr('disabled', false);
       $("#start-bg" ).hide()
+      var game = new Game("canvas", level);
+      game.storeScore(playerName);
       game.start();
     });
 
@@ -23,9 +42,8 @@ window.onload = function() {
       location.reload()
     });
 
-
-    var tableHeadContent = ["Player","Result"]
     var results = localStorage
+    var tableHeadContent = ["Player","Result"]
     var table = $('<table>').attr('class', 'table table-striped table-dark');
     var trow = $('<tr>')
     var thead = $('<thead>').attr('class','thead-dark')
@@ -39,14 +57,26 @@ window.onload = function() {
 
     keysSorted = Object.keys(results).sort(function(a,b){return results[b]-results[a]})
 
-    keysSorted.forEach(function(key){
-        var row = $('<tr>').addClass('score')
-        var playerRow = $('<td>').addClass('player_name').text(key);
-        var scoreRow = $('<td>').addClass('player_score').text(results[key]);
-        row.append(playerRow, scoreRow)
-        tbody.append(row);
-    });
-    
+    for (var i = 0; i < 10; i++){
+      key = keysSorted[i];
+      console.log(keysSorted[i], "array")
+      console.log(typeof results[key], "localStorage")
+      if (keysSorted[i] == undefined) { 
+        key = "-";
+        result = "-";
+      } else {
+        key = keysSorted[i];
+        result = results[key];
+      }
+      var row = $('<tr>').addClass('score')
+      var playerRow = $('<td>').addClass('player_name').text(key);
+      var scoreRow = $('<td>').addClass('player_score').text(result);
+      row.append(playerRow, scoreRow)
+      tbody.append(row);
+
+    };
+
+
     thead.append(trow);
     table.append(thead);
     table.append(tbody);
