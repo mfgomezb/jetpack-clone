@@ -13,7 +13,6 @@ function Char(game) {
     this.thrustPower = 7.5;                      // La fuerza del thrust debe de ser mayor a la gravedad para que pueda ascender.
 }
 
-
 Char.prototype.draw = function() {
     this.game.ctx.save()
     this.game.ctx.drawImage(this.img, this.x, this.y, 40, 50);
@@ -33,8 +32,6 @@ Char.prototype.thrust = function() {
         this.y += this.velocity;
     }
 }
-
-
 
 Char.prototype.gravity = function() {
     this.velocity += this.gravityAcc
