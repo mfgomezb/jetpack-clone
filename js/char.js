@@ -10,7 +10,7 @@ function Char(game) {
     this.h = 50;  
     this.gravityAcc = 1;                     // necesito incluir dos movimientos, ascenso (thrust) y descenso (gravity). 
     this.velocity = 0;                        // la direccion dependera de la activacion de los thrusters
-    this.thrustPower = 7.5;                      // La fuerza del thrust debe de ser mayor a la gravedad para que pueda ascender.
+    this.thrustPower = 1.5;                      // La fuerza del thrust debe de ser mayor a la gravedad para que pueda ascender.
 }
 
 Char.prototype.draw = function() {
@@ -20,16 +20,18 @@ Char.prototype.draw = function() {
 }
 
 Char.prototype.thrust = function() {
-    if (this.velocity > 0){
-        this.velocity-=5;
-    }
-
-    if (this.y ==  this.height-100){
-        this.velocity -= this.thrustPower;
-        this.y += this.velocity;
-    } else {
-        this.velocity -= this.thrustPower;
-        this.y += this.velocity;
+    if (32 in keysDown){
+        if (this.velocity > 0){
+            this.velocity-=5;
+        }
+    
+        if (this.y ==  this.height-100){
+            this.velocity -= this.thrustPower;
+            this.y += this.velocity;
+        } else {
+            this.velocity -= this.thrustPower;
+            this.y += this.velocity;
+        }
     }
 }
 

@@ -70,18 +70,23 @@ Game.prototype.reset = function(level) {
     this.level = level;
 };
 
+var keysDown = {}
+
 Game.prototype.commands = function () {
     document.onkeydown = function(event) {
+        keysDown[event.keyCode] = true;
         if (event.keyCode == 32) {
-            this.char.thrust();
+            // this.char.thrust();
             this.sound.jetpackAudio();
-        } else if (event.keyCode == 38) {
+        }
+        if (event.keyCode == 38) {
             this.generateBullet();
             this.sound.charAudio();
         }
     }.bind(this);
 
     document.onkeyup = function(event) {
+        delete keysDown[event.keyCode];
             this.sound.jetpackAudio();
     }.bind(this);
 };
@@ -143,6 +148,7 @@ Game.prototype.commonState1and2 = function() {
     this.moveAll();
     this.draw();
     this.commands();
+    this.char.thrust();
     this.clearObjects();
     this.coinGrab();
     this.heartGrab();
