@@ -1,12 +1,12 @@
 function Evil(game) {
     this.game = game;
     this.evil = new Image();
-    this.evil.src = 'img/evilbear.png';
+    this.evil.src = 'img/trump.png';
 
     this.x = this.game.canvas.width - 150;
     this.y = 150;
-    this.w = 90;
-    this.h = 130;
+    this.w = 110;
+    this.h = 100;
     this.dy = 5;
     this.fall = true;
 }

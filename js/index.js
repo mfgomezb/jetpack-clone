@@ -5,6 +5,9 @@ window.onload = function () {
     }
     level = 80;
     playerName = "";
+
+    var spaceBar = "<img src='img/spacebar.png' />";
+
     $(".btn-restart").attr('disabled', true);
     $(".btn-easy").attr('disabled', true);
     $(".btn-hard").attr('disabled', true);
@@ -64,6 +67,13 @@ window.onload = function () {
         row.append(playerRow, scoreRow)
         tbody.append(row);
     };
+
+    // var rows = $('<tr>').addClass('score')
+    // var spaceBarRow = $('<td>').addClass('space_bar').text(key)+spaceBar;
+    // var SpaceBarTextRow = $('<td>').addClass('player_score').text("SHOOT");
+    // rows.append(spaceBarRow, spaceBarTextRow);
+    // tbody.append(rows);
+
     thead.append(trow);
     table.append(thead);
     table.append(tbody);

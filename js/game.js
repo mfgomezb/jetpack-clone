@@ -57,6 +57,7 @@ Game.prototype.reset = function(level) {
     this.background = new Background(this);
     this.char = new Char(this);
     this.evil = new Evil(this);
+    this.sound = new Sound(this);
     this.framesCounter = 0;
     this.obstacles = [];
     this.coins = [];
@@ -72,17 +73,24 @@ Game.prototype.reset = function(level) {
 Game.prototype.commands = function () {
     document.onkeydown = function(event) {
         if (event.keyCode == 32) {
-            this.char.thrust(); 
+            this.char.thrust();
+            this.sound.jetpackAudio();
         } else if (event.keyCode == 38) {
             this.generateBullet();
+            this.sound.charAudio();
         }
     }.bind(this);
-}
+
+    document.onkeyup = function(event) {
+            this.sound.jetpackAudio();
+    }.bind(this);
+};
 
 Game.prototype.evilShoot = function () {
     Math.random()
     if (Math.random() < 0.05) {
         this.generateEvilBullet();
+        this.sound.evilAudio();
     }
 }
 
@@ -175,6 +183,7 @@ Game.prototype.generateCoin = function() {
     }  
 };
 
+
 Game.prototype.generateObstacle = function() {
     this.obstacles.push(new Obstacle(this));
 };
@@ -197,6 +206,8 @@ Game.prototype.evilLifeCheck = function () {
         this.drawEvil()
     } else {
         this.controlVar = 2;
+        this.sound.evilDeathAudio();
+        this.score +=10;
     }
 }
 
@@ -217,6 +228,7 @@ Game.prototype.isCollision = function() {
         && ((this.char.x) < obstacle.x2+obstacle.w))
         ) {
             this.obstacles.splice(i,1);
+            this.sound.stunAudio();
             this.life--;
             return true;
         };
@@ -235,6 +247,7 @@ Game.prototype.coinGrab = function() {
     if (this.impactChecker(coin)) {
         this.coins.splice(i,1);
         this.score++;
+        this.sound.coinAudio();
         return true;
     } ;
     }.bind(this));
@@ -244,6 +257,7 @@ Game.prototype.heartGrab = function() {
     return this.hearts.forEach(function(heart, i) {
     if (this.impactChecker(heart)) {
         this.hearts.splice(i,1);
+        this.sound.healAudio();
         this.life++;
         return true;
     } ;
@@ -259,6 +273,7 @@ Game.prototype.isImpact = function() {
         ) {
             this.bullets.splice(i,1);
             this.evilLife--;
+            this.sound.damageAudio();
             return true;
         };
     }.bind(this));
@@ -269,6 +284,7 @@ Game.prototype.evilImpact = function() {
     if (this.impactChecker(evilBullet)) {
         this.evilBullets.splice(i,1);
         this.life--;
+        this.sound.damageAudio();
         return true;
     };
     }.bind(this));
@@ -281,7 +297,7 @@ Game.prototype.drawScoreBoard = function() {
     this.ctx.fillStyle = "white";
     this.ctx.fillText(Math.floor(this.score), this.canvas.width-50, 50);
     scoreCoin = new Image();
-    scoreCoin.src = 'img/coin2.png';
+    scoreCoin.src = 'img/moneda.png';
     this.ctx.save()
     this.ctx.drawImage(scoreCoin, this.canvas.width-85, 25, 30, 30);
     this.ctx.restore()
